@@ -63,7 +63,6 @@ if DEBUG:
 # БАЗА ДАННЫХ
 # ============================================================================
 
-# По умолчанию используем SQLite (для локальной разработки)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -73,7 +72,7 @@ DATABASES = {
 
 # Если есть DATABASE_URL (на Render) - используем PostgreSQL
 DATABASE_URL = os.environ.get('DATABASE_URL')
-if DATABASE_URL:
+if DATABASE_URL and DATABASE_URL.startswith('postgresql://'):
     try:
         import dj_database_url
         DATABASES['default'] = dj_database_url.parse(
