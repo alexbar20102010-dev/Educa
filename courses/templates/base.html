@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Educa{% endblock %}</title>
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <a href="/" class="logo">Educa</a>
+        <ul class="menu">
+        {% if request.user.is_authenticated %}
+            <li><form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class='button__one'>Выйти</button>
+                </form>
+            </li>
+        {% else %}
+            <li>
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="button__one">Войти</button>
+                </form>
+            </li>
+            <li>
+                <form method="post" action="{% url 'student_registration'%}">
+                    {% csrf_token %}
+                    <button type="submit" class="button__two">Регистрация</button>
+                </form>
+            </li>
+        {% endif %}
+        {% if request.user.is_authenticated %}
+            {% if request.user.groups.all.0.name == 'Teachers' %}
+                <li>
+                    <button type="submit" class="button__two"><a href="{% url 'manage_course_list'%}">Мои курсы</a></button>
+                </li>
+            {% else %}
+                <li>
+                    <button type="submit" class="button__two"><a href="{% url 'student_course_list'%}">Мои курсы</a></button>
+                </li>
+            {% endif %}
+        {% endif %}
+        </ul>
+    </header>
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

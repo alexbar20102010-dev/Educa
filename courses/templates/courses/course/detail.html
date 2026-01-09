@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}
+	{{ object.title }}
+{% endblock %}
+{% block content %}
+	{% with subject=course.subject %}
+		<h1 class="header">{{ object.title }}</h1>
+		<div class="module__detail">
+			<h2 class="title__detail">Обзор</h2>
+			<p class="content__detail">
+				<a href="{% url 'course_list_subject' subject.slug %}">{{ subject.title }}</a>.
+				Количество модулей: {{ course.modules.count }}.
+				Учитель: {{ course.owner.get_full_name }}
+			</p>
+			<p class="content__detail">Описание:</p>
+			{{ object.overview|linebreaks }}
+			{% if request.user.is_authenticated %}
+				<form action="{% url 'student_enroll_course' %}" method="post">
+					{{ enroll_form }}
+					{% csrf_token %}
+					<input type="submit" class="button" value="Записаться">
+				</form>
+			{% else %}
+				<a href="{% url 'student_registration' %}" class="button">Зарегистрируйтесь</a>
+			{% endif %}
+		</div>
+	{% endwith %}
+{% endblock %}
