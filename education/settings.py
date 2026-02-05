@@ -1,35 +1,24 @@
+# education/settings.py - ЗАМЕНИТЕ ВЕСЬ ФАЙЛ
 import os
 from pathlib import Path
 from django.urls import reverse_lazy
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Ключ для Beget (генерируется автоматически при первом запуске)
-SECRET_KEY = os.environ.get('SECRET_KEY', 'ваш-секретный-ключ-здесь')
+# Сгенерируйте новый ключ для продакшена!
+SECRET_KEY = 'n!sjs&-*klswfjen47_aibmr8lagz1of^7&_ch=(+0&x@i)($5'
 
-# DEBUG: True для разработки, False для продакшена
-DEBUG = False if os.environ.get('BEGET_PRODUCTION') else True
+DEBUG = False
 
-# Разрешенные хосты (добавьте ваш домен Beget позже)
+# ВАЖНО: Добавьте ВАШ домен Beget сюда!
 ALLOWED_HOSTS = [
     'localhost',
-    '127.0.0.1',
-    '.beget.app',  # Для Beget Cloud
-    '.beget.tech', # Для Beget VPS
+    '127.0.0.1', 
+    'educa.beget.app',           # Замените на ваш реальный домен
+    'www.educa.beget.app',
 ]
 
-# Добавьте ваш домен после получения:
-# ALLOWED_HOSTS.append('ваш-сайт.beget.app')
-
-# База данных - SQLite для Beget
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-# Приложения
+# Application definition
 INSTALLED_APPS = [
     'students.apps.StudentsConfig',
     'courses.apps.CoursesConfig',
@@ -70,7 +59,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'education.wsgi.application'
 
-# Валидация паролей
+# Database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -86,27 +83,33 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Язык и время
+# Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Статические файлы
-STATIC_URL = 'static/'
+# Static files
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# Медиа файлы
+# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Безопасность для продакшена
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = reverse_lazy('profile')
+
+# Для продакшена (потом раскомментируете)
+"""
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_REDIRECT_URL = reverse_lazy('profile')
+    CSRF_TRUSTED_ORIGINS = [
+        'https://educa.beget.app',
+        'https://www.educa.beget.app',
+    ]
+"""
