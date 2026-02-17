@@ -5,20 +5,19 @@ from django.urls import reverse_lazy
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Сгенерируйте новый ключ для продакшена!
+
 SECRET_KEY = 'n!sjs&-*klswfjen47_aibmr8lagz1of^7&_ch=(+0&x@i)($5'
 
 DEBUG = False
 
-# ВАЖНО: Добавьте ВАШ домен Beget сюда!
+
 ALLOWED_HOSTS = [
+    '45.12.239.75',
     'localhost',
-    '127.0.0.1', 
-    'educa.beget.app',           # Замените на ваш реальный домен
-    'www.educa.beget.app',
+    '127.0.0.1'
 ]
 
-# Application definition
+
 INSTALLED_APPS = [
     'students.apps.StudentsConfig',
     'courses.apps.CoursesConfig',
@@ -59,7 +58,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'education.wsgi.application'
 
-# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -67,7 +65,6 @@ DATABASES = {
     }
 }
 
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -83,33 +80,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = reverse_lazy('profile')
 
-# Для продакшена (потом раскомментируете)
-"""
-if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    CSRF_TRUSTED_ORIGINS = [
-        'https://educa.beget.app',
-        'https://www.educa.beget.app',
-    ]
-"""
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = [
+    'https://your-domain.beget.app',
+    'https://www.your-domain.beget.app',
+]
