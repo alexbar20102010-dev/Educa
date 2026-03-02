@@ -10,7 +10,7 @@ from django.db.models import Count
 from django.views.generic.detail import DetailView
 from django.contrib import messages
 
-from .forms import ModuleFormSet, GradeForm
+from .forms import ModuleFormSet, GradeForm, AnswerForm
 from .models import Course, Module, Content, Subject, Answer
 from students.forms import CourseEnrollForm
 
@@ -282,3 +282,25 @@ class AnswerDeleteView(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(request, 'Ответ успешно удален!')
         return super().delete(request, *args, **kwargs)
+
+
+class AnswerCreateView(LoginRequiredMixin, CreateView):
+    """
+    Представление для создания ответа (прикрепления файла)
+    1. Если форма валидна, то присвает значениям полей моделей нынешнего пользователя, прикрепленный файл и модуль
+    2. Перенаправляет обратно на страницу с модулем
+    """
+    model = Answer
+    form_class = AnswerForm
+    template_name = 'courses/manage/module/answer_form.html'
+    
+    def form_valid(self, form):
+        module = get_object_or_404(Module, id=self.kwargs['module_id'])
+        form.instance.student = self.request.user
+        form.instance.module = module
+        messages.success(self.request, 'Файл успешно прикреплен!')
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy('student_course_detail_module', 
+                          args=[self.object.module.course.id, self.object.module.id])
