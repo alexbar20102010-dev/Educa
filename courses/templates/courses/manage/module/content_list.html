@@ -49,6 +49,7 @@
                 <li><a href="{% url 'module_content_create' module.id 'image' %}">Картинка</a></li>
                 <li><a href="{% url 'module_content_create' module.id 'video' %}">Видео</a></li>
                 <li><a href="{% url 'module_content_create' module.id 'file' %}">Файл</a></li>
+                <li><a href="{% url 'create_answer' module.id %}" class="button">Прикрепление</a></li>
             </ul>
         </div>
     {% endwith %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Просмотр ответа{% endblock %}
+{% block content %}
+<h1 class="header">Ответ</h1>
+
+<div class="answer-detail">
+    <h3>Скачать файл</h3>
+    <p>
+        <a href="{{ answer.file.url }}" class="button" download>Скачать</a>
+    </p>
+    
+    <h3>Ответьте на вопросы для выставления оценки</h3>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="grade-form">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="button">Сохранить</button>
+    </form>
+</div>
+{% endblock %}

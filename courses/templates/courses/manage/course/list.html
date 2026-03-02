@@ -13,6 +13,7 @@
 					{% if course.modules.count > 0 %}
 						<a href="{% url 'module_content_list' course.modules.first.id %}">Управление контентом</a>
 					{% endif %}
+					<a href="{% url 'answers_list' %}" class="solutions-link">Управление решениями</a>
 				</p>
 			</div>
 			{% empty %}

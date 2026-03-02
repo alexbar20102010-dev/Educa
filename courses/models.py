@@ -4,7 +4,6 @@ from .fields import OrderField
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
 
 from django.contrib.contenttypes.fields import GenericForeignKey
 
@@ -148,3 +147,22 @@ class Video(ItemBase):
     class Meta():
         verbose_name = 'Видео'
         verbose_name_plural = 'Видео'
+
+
+class Answer(models.Model):
+    """Модель для хранения ответов проходящих курс"""
+
+    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='answers', verbose_name='Ученик')
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='answers', verbose_name='Модуль')
+    file = models.FileField(upload_to='answers/%Y/%m/%d/', verbose_name='Прикрепленный файл')
+    grade = models.PositiveIntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')], null=True, blank=True, verbose_name='Оценка')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Дата отправки')
+    updated = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
+
+    class Meta:
+        ordering = ['-created']
+        verbose_name = 'Ответ'
+        verbose_name_plural = 'Ответы'
+    
+    def __str__(self):
+        return f'{self.student.username} - {self.module.title}'

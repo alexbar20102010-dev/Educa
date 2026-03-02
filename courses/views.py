@@ -8,9 +8,10 @@ from django.forms.models import modelform_factory
 from django.apps import apps
 from django.db.models import Count
 from django.views.generic.detail import DetailView
+from django.contrib import messages
 
-from .forms import ModuleFormSet
-from .models import Course, Module, Content, Subject
+from .forms import ModuleFormSet, GradeForm
+from .models import Course, Module, Content, Subject, Answer
 from students.forms import CourseEnrollForm
 
 
@@ -240,3 +241,44 @@ def custom_login_redirect(request):
         return redirect('manage_course_list')
     else:
         return redirect('course_list')
+    
+
+class AnswersListView(LoginRequiredMixin, ListView):
+    """
+    Представление для списка всех ответов
+    1. Собирает queryset по тем курсам, принадлежащим данному пользователю-учителю
+    """
+    model = Answer
+    template_name = 'courses/manage/module/answers_list.html'
+    context_object_name = 'answers'
+    
+    def get_queryset(self):
+        teacher_courses = Course.objects.filter(owner=self.request.user)
+        return Answer.objects.filter(module__course__in=teacher_courses).select_related('student', 'module')
+
+
+class AnswerDetailView(LoginRequiredMixin, UpdateView):
+    """
+    Представление для просмотра и оценки ответа
+    1. Вызывает заранее сделанную форму, после заполнения которой перенаправляет на страницу с перечисленными ответами
+    """
+    model = Answer
+    form_class = GradeForm
+    template_name = 'courses/manage/module/view_answer.html'
+    
+    def get_success_url(self):
+        messages.success(self.request, 'Оценка сохранена!')
+        return reverse_lazy('answers_list')
+
+
+class AnswerDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    Представление для удаления ответа
+    1. Удаляет ответ в базе Answer
+    """
+    model = Answer
+    success_url = reverse_lazy('answers_list')
+    
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Ответ успешно удален!')
+        return super().delete(request, *args, **kwargs)

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Прикрепить файл{% endblock %}
+{% block content %}
+<h1 class="header">Прикрепить файл к модулю "{{ module.title }}"</h1>
+<div class="answer-form">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="button">Отправить</button>
+        <a href="{% url 'student_course_detail_module' module.course.id module.id %}" class="button">Отмена</a>
+    </form>
+</div>
+{% endblock %}

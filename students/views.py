@@ -1,14 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView, FormView
+from django.views.generic import CreateView, FormView, ListView, UpdateView, DeleteView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 
-from courses.models import Course
+from courses.models import Answer, Module, Course
 from .forms import CourseEnrollForm
+from courses.forms import AnswerForm, GradeForm
 
 
 class StudentRegistrationView(CreateView):
@@ -96,3 +98,25 @@ class StudentCourseDetailView(DetailView):
         else:
             context['module'] = course.modules.all()[0]
             return context
+
+
+class AnswerCreateView(LoginRequiredMixin, CreateView):
+    """
+    Представление для создания ответа (прикрепления файла)
+    1. Если форма валидна, то присвает значениям полей моделей нынешнего пользователя, прикрепленный файл и модуль
+    2. Перенаправляет обратно на страницу с модулем
+    """
+    model = Answer
+    form_class = AnswerForm
+    template_name = 'students/course/answer_form.html'
+    
+    def form_valid(self, form):
+        module = get_object_or_404(Module, id=self.kwargs['module_id'])
+        form.instance.student = self.request.user
+        form.instance.module = module
+        messages.success(self.request, 'Файл успешно прикреплен!')
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy('student_course_detail_module', 
+                          args=[self.object.module.course.id, self.object.module.id])
